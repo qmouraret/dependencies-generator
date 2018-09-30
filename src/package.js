@@ -27,10 +27,22 @@ const PackageManager = {
     /**
      *
      * @param {String[]} versions
+     * @param {Boolean} stable
      * @returns {String}
      */
-    const getLastVersionStable = (versions) => {
-      return versions[versions.length - 1]
+    const getLatestVersion = (versions, stable = true) => {
+      const NON_STABLE_VERSION_PATTERN = /[0-9].[0-9].[0-9]-/
+      let lastVersionIndex = versions.length - 1
+      let lastVersion = versions[lastVersionIndex]
+
+      if (stable && lastVersion.match(NON_STABLE_VERSION_PATTERN)) {
+        // find the last version stable
+        while (lastVersion.match(NON_STABLE_VERSION_PATTERN) && lastVersionIndex > 0) {
+          lastVersionIndex--
+          lastVersion = versions[lastVersionIndex]
+        }
+      }
+      return lastVersion
     }
 
     return {
@@ -53,25 +65,19 @@ const PackageManager = {
        * }
        * @returns {Promise<void>}
        */
-      getLastVersions: async () => {
+      getLatestVersions: async () => {
         const list = Object.entries(getAllDependencies()).map((value) => npm.getVersions(value[0]))
         const allPackageFounded = await Promise.all(list)
-        //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> versions : ", versions)
-        Object.keys(allPackageFounded).map((key) => {
+        const latestVersions = Object.keys(allPackageFounded).map((key) => {
           const pack = allPackageFounded[key]
-          const lastVersionStable = getLastVersionStable(pack.versions)
-          console.log("package: ", pack.name, " >>> ", lastVersionStable)
-
+          const latestVersion = getLatestVersion(pack.versions)
+          console.log("package: ", pack.name, " >>> ", latestVersion)
+          return {
+            name: pack.name,
+            version: latestVersion
+          }
         })
-
-        // return Promise.all(list).then((versions) => {
-        //   console.log('resolved : ', versions)
-        // }).catch((e) => {
-        //   console.error("Error during recovery versions. ", e)
-        // })
-
-        // const versions = await npm.getVersions("express")
-        // console.log(">>>>>> versions: ", versions) // .stdout.toString().trim())
+        return latestVersions
       }
     }
   }

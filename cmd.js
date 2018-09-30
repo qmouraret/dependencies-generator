@@ -6,8 +6,8 @@ const app = async () => {
   const packageJson = await packageManager.load("./package.json")
   console.log(packageJson.toJson())
 
-  const lastVersions = await packageJson.getLastVersions()
-  // console.log("---lastVersions--- ", lastVersions)
+  const latestVersions = await packageJson.getLatestVersions()
+  console.log("---lastVersions--- ", latestVersions)
 }
 
 app().then(() => {
