@@ -1,5 +1,6 @@
-const { readJson } = require("fs-extra")
-const npm = require("./npm")
+const { readJson } = require('fs-extra')
+const npm = require('./npm')
+const Version = require('./Version')
 
 const PackageManager = {
   load: async (url) => {
@@ -13,6 +14,38 @@ const PackageManager = {
     }
 
     /**
+     * Return severity:
+     * 0 no
+     * 1 patch: low
+     * 2 minor: medium
+     * 3 major: high
+     *
+     * @param current
+     * @param latest
+     * @return {number}
+     */
+    const returnSeverityIndice = (current, latest) => {
+      console.log(current, ',,,', latest)
+      current = new Version(current.replace(/[~^]/g, ''))
+      latest = new Version(latest.replace(/[~^]/g, ''))
+
+      if (current.major() === latest.major()) {
+        if (current.minor() === latest.minor()) {
+          if (current.patch() === latest.patch()) {
+            return 0
+          } else if (latest.patch() > current.patch()) {
+            return 1
+          }
+        } else if (latest.minor() > current.minor()) {
+          return 2
+        }
+      } else if (latest.major() > current.major()) {
+        return 3
+      }
+      return 0
+    }
+
+    /**
      * Returns all dependencies
      * @returns {Object}
      */
@@ -22,6 +55,15 @@ const PackageManager = {
         dependencies = Object.assign(dependencies, packageJson.devDependencies)
       }
       return dependencies
+    }
+
+    const getVersionForDependency = (name) => {
+      const dependencies = getAllDependencies()
+      for (const dependency in dependencies) {
+        if (dependency === name) {
+          return dependencies[dependency]
+        }
+      }
     }
 
     /**
@@ -71,10 +113,12 @@ const PackageManager = {
         const latestVersions = Object.keys(allPackageFounded).map((key) => {
           const pack = allPackageFounded[key]
           const latestVersion = getLatestVersion(pack.versions)
-          console.log("package: ", pack.name, " >>> ", latestVersion)
+          console.log('package: ', pack.name, ' >>> ', latestVersion)
+          const currentVersion = getVersionForDependency(pack.name)
           return {
             name: pack.name,
-            version: latestVersion
+            version: latestVersion,
+            severity: returnSeverityIndice(currentVersion, latestVersion)
           }
         })
         return latestVersions
