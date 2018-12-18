@@ -1,9 +1,14 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express')
+const router = express.Router()
+const packageManager = require('../src/package')
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+router.get('/', async function (req, res, next) {
+  const data = { title: 'Express' }
+  const packageJson = await packageManager.load("./package.json")
+  console.log('Processing: ', packageJson)
+  data.latestVersions = await packageJson.getLatestVersions()
+  res.render('index', data)
+})
 
-module.exports = router;
+module.exports = router

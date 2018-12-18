@@ -1,2 +1,10 @@
 <h1>{{title}}</h1>
 <p>Welcome to {{title}}</p>
+<div>
+    {{#each latestVersions}}
+        <div class="severity-{{severity}}">
+            <span>{{name}}</span>
+            <span>{{version.latest}}</span>
+        </div>
+    {{/each}}
+</div>

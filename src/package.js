@@ -117,7 +117,10 @@ const PackageManager = {
           const currentVersion = getVersionForDependency(pack.name)
           return {
             name: pack.name,
-            version: latestVersion,
+            version: {
+              latest: latestVersion,
+              current: currentVersion
+            },
             severity: returnSeverityIndice(currentVersion, latestVersion)
           }
         })
