@@ -1,10 +1,21 @@
 <h1>{{title}}</h1>
-<p>Welcome to {{title}}</p>
 <div>
     {{#each latestVersions}}
-        <div class="severity-{{severity}}">
-            <span>{{name}}</span>
-            <span>{{version.latest}}</span>
+        <div class="dependence">
+            <div class="header">
+                <span class="name">{{name}}</span>
+            </div>
+            <div class="body">
+                <div class="info">
+                    <span class="type">packaged</span><span class="version">{{versions.packaged}}</span>
+                    <span class="type">installed</span><span class="version">{{versions.installed}}</span>
+                    <span class="type">latest</span><span
+                        class="version severity-{{severity}}">{{versions.latest}}</span>
+                </div>
+                <div class="choice">
+                    {{{select allVersions versions.installed}}}
+                </div>
+            </div>
         </div>
     {{/each}}
 </div>

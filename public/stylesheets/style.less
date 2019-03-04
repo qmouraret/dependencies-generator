@@ -10,12 +10,60 @@ a {
 .severity-0 {
   background: green;
 }
+
 .severity-1 {
   background: yellow;
 }
+
 .severity-2 {
   background: orange;
 }
+
 .severity-3 {
   background: red;
+}
+
+.dependence {
+  border-top: 1px solid #eee;
+  padding-bottom: 5px;
+
+  .header {
+    .name {
+      font-size: 1em;
+      font-weight: bold;
+    }
+  }
+
+  .body {
+    display: flex;
+    font-size: 0.9rem;
+    justify-content: space-between;
+
+    .type {
+      margin: 0 5px;
+    }
+
+    .version {
+      border: 1px solid #333;
+      border-radius: 5px;
+      background: #eee;
+      padding: 2px 5px;
+
+      &.severity-0 {
+        background: #47e645;
+      }
+
+      &.severity-1 {
+        background: #fffb50;
+      }
+
+      &.severity-2 {
+        background: #ffac01;
+      }
+
+      &.severity-3 {
+        background: #f5363b;
+      }
+    }
+  }
 }

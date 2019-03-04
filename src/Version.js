@@ -1,4 +1,4 @@
-const VERSION_REGEX = /^(\d+)\.(\d+)\.(\d+)$/
+const VERSION_REGEX = /^(\d+)\.(\d+)\.(\d+)/
 const MAJOR = 1
 const MINOR = 2
 const PATCH = 3

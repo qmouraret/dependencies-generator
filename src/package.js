@@ -7,8 +7,7 @@ const PackageManager = {
     let packageJson
     try {
       packageJson = await readJson(url)
-    }
-    catch (e) {
+    } catch (e) {
       console.error(`Error during reading file: ${url}`)
       return new Error(e)
     }
@@ -87,6 +86,10 @@ const PackageManager = {
       return lastVersion
     }
 
+    const getInstalledVersion = (list, name) => {
+      return list.dependencies[name].version
+    }
+
     return {
       /**
        * Returns the package.json content
@@ -105,26 +108,32 @@ const PackageManager = {
        *     version: "0.3.2"
        *   }
        * }
-       * @returns {Promise<void>}
+       *
+       * @return {Promise<{severity: number, name: *, versions: {installed, packaged, latest}}[]>}
        */
       getLatestVersions: async () => {
         const list = Object.entries(getAllDependencies()).map((value) => npm.getVersions(value[0]))
         const allPackageFounded = await Promise.all(list)
-        const latestVersions = Object.keys(allPackageFounded).map((key) => {
+        const packageInstalledVersions = await npm.list()
+
+        return Object.keys(allPackageFounded).map((key) => {
           const pack = allPackageFounded[key]
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ', pack)
           const latestVersion = getLatestVersion(pack.versions)
           console.log('package: ', pack.name, ' >>> ', latestVersion)
-          const currentVersion = getVersionForDependency(pack.name)
+          const packageVersion = getVersionForDependency(pack.name)
+          const installedVersion = getInstalledVersion(packageInstalledVersions, pack.name)
           return {
             name: pack.name,
-            version: {
+            versions: {
+              installed: installedVersion,
               latest: latestVersion,
-              current: currentVersion
+              packaged: packageVersion
             },
-            severity: returnSeverityIndice(currentVersion, latestVersion)
+            severity: returnSeverityIndice(installedVersion, latestVersion),
+            allVersions: pack.versions
           }
         })
-        return latestVersions
       }
     }
   }

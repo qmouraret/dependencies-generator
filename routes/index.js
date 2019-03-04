@@ -4,7 +4,7 @@ const packageManager = require('../src/package')
 
 /* GET home page. */
 router.get('/', async function (req, res, next) {
-  const data = { title: 'Express' }
+  const data = { title: 'dependencies-manager' }
   const packageJson = await packageManager.load("./package.json")
   console.log('Processing: ', packageJson)
   data.latestVersions = await packageJson.getLatestVersions()
